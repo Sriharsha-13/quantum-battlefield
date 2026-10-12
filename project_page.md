@@ -92,6 +92,6 @@ I built Quantum Battlefield because the ideas that make quantum computing powerf
 
 ---
 
-## Licence
+## Credits
 
-Released under the **MIT License**. Created by **Sriharsha** for the **Qollab Hackathon 2026**.
+Created by **Sriharsha** for the **Qollab Hackathon 2026**.

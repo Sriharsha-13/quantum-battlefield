@@ -53,7 +53,3 @@ Each adventure folder keeps the three files the Qollab "JS / Qiskit" editor expe
 ```
 powershell -ExecutionPolicy Bypass -File build-play-pages.ps1
 ```
-
-## Licence
-
-[MIT](LICENSE) © 2026 Sriharsha
