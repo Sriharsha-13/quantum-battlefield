@@ -1,0 +1,144 @@
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <h1>Quantum Plants vs. Zombies</h1>
+      <p class="sub">Adventure 2: Grover's search with phase kickback. Zombie lanes on the lawn, the ancilla in the pool below.</p>
+    </div>
+    <div class="chips">
+      <div class="chip"><span>Level</span><strong id="levelChip">a · 1 of 4</strong></div>
+      <div class="chip"><span>Base</span><strong id="baseHP">10 / 10</strong></div>
+      <div class="chip"><span>Measurement gate</span><strong id="gateHP">10 / 10</strong></div>
+      <div class="chip"><span>Score</span><strong id="score">0</strong></div>
+      <div class="chip"><span>Kill bar</span><strong id="killChip">&gt; 500 / 1000</strong></div>
+      <div class="chip wide"><span>Boss</span><strong id="bossChip">none</strong></div>
+    </div>
+  </header>
+
+  <section class="sign sign-row">
+    <p id="msg"></p>
+    <button class="btn ghost tut-open" id="tutOpen">How to play</button>
+    <button class="btn btn-run ready" id="ready">Ready</button>
+  </section>
+
+  <section class="lawn-wrap">
+    <canvas id="lawn" aria-label="Zombie lanes and an ancilla pool with a planted Grover circuit"></canvas>
+  </section>
+
+  <div class="grid">
+    <section class="panel">
+      <h2>Levels</h2>
+      <div class="levels" id="levelSel">
+        <button class="lvl">a. Mark the boss</button>
+        <button class="lvl">b. Build the diffuser</button>
+        <button class="lvl">c. Superposed boss</button>
+        <button class="lvl">d. Three lanes</button>
+      </div>
+      <p class="hint small">a to c: 2 data qubits + ancilla (a 3-qubit circuit), searching 4 patterns. d: 3 data qubits + ancilla (a 4-qubit circuit), searching 8.</p>
+      <h2>Gate tray</h2>
+      <p class="hint" id="toolHint">Gates with a padlock are fixed. Pick a gate, then click an open column on the lawn: 3 oracle slots and 3 diffuser slots.</p>
+      <div class="tools" id="tools">
+        <button data-tool="X" class="tool on">X</button>
+        <button data-tool="MCX" class="tool">⊕ onto j</button>
+        <button data-tool="MCZ" class="tool">Controlled-Z</button>
+        <button data-tool="MCSX" class="tool">√X onto j</button>
+        <button data-tool="MCS" class="tool">Controlled-S</button>
+        <button data-tool="ERASE" class="tool">Eraser</button>
+      </div>
+      <div class="row dim" id="ctrlRow">
+        <span class="inline-label">Controls</span>
+        <div class="seg multi" id="ctrlSel">
+          <button data-q="0" class="on">q0</button><button data-q="1" class="on">q1</button><button data-q="2" class="on">q2</button>
+        </div>
+        <span class="count" id="ctrlHint"></span>
+      </div>
+      <div class="row">
+        <span class="inline-label">Repeat the Grover block</span>
+        <div class="seg" id="rounds">
+          <button data-r="1" class="on">1</button><button data-r="2">2</button><button data-r="3">3</button><button data-r="4">4</button>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn ghost" id="textbook">Plant textbook diffuser</button>
+        <button class="btn ghost" id="clearCircuit">Clear circuit</button>
+      </div>
+      <h3>Measurement gate</h3>
+      <button class="btn full" id="basis">Measurement basis: Z</button>
+      <div class="row">
+        <button class="btn ghost" id="pause">Pause</button>
+        <button class="btn danger" id="restart">Restart adventure</button>
+        <span class="count" id="entityCount"></span>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Circuit output</h2>
+      <label class="toggle"><input type="checkbox" id="showPred"> Show predicted probabilities</label>
+      <p class="hint" id="predInfo"></p>
+      <div class="bars hist" id="predBars"></div>
+      <h3>Duel</h3>
+      <button class="btn btn-run" id="duel">Duel: fire 1000 shots at the boss</button>
+      <p class="hint" id="duelInfo">No duel yet.</p>
+      <div class="bars hist" id="duelBars"></div>
+    </section>
+  </div>
+
+  <div class="grid">
+    <section class="panel">
+      <h2>Latest register</h2>
+      <p class="hint" id="regInfo"></p>
+      <div class="bars" id="ampBars"></div>
+      <p class="hint small">Green: positive real amplitude. Red: negative. Blue: complex (the phase i gates of level c).</p>
+      <div class="lanestates four" id="laneStates"></div>
+    </section>
+    <details class="panel test">
+      <summary>Test tools</summary>
+      <p class="hint">Drop extra zombies into a moving wave.</p>
+      <div class="row">
+        <span class="inline-label">Lane</span>
+        <div class="seg" id="laneSel">
+          <button data-l="0" class="on">q0</button><button data-l="1">q1</button><button data-l="2">q2</button>
+        </div>
+      </div>
+      <div class="spawn">
+        <button data-z="0">Zombie 0</button>
+        <button data-z="1">Zombie 1</button>
+        <button data-z="+">Zombie +</button>
+        <button data-z="-">Zombie −</button>
+        <button data-z="Q" class="q">Quantum zombie |+⟩</button>
+      </div>
+    </details>
+  </div>
+
+  <details class="panel notes" open>
+    <summary>Rules</summary>
+    <p><b>Levels.</b> a: the diffuser is planted and locked; build the oracle. b: build the oracle and the diffuser. c: the boss is spread over two patterns. d: three data qubits, eight patterns. Each level lines up first; press Ready when your circuit is planted.</p>
+    <p><b>The ancilla.</b> The pool lane j is the ancilla, drawn as a gold diamond. Locked X·H put it in |−⟩ before the Grover loop, and a locked H returns it to |1⟩ afterwards. A ⊕ onto j flips the sign of every pattern whose controls are all 1: that is phase kickback, and it is how the oracle marks the boss. A √X onto j kicks back phase i instead, because √X|−⟩ = i|−⟩.</p>
+    <p><b>Kill bar.</b> A duel fires 1000 shots of your circuit. The boss dies only if more than the kill bar hit its pattern: 500 in a and c, 700 in b, 900 in d. The boss never heals. Each register that reaches it is one more shot, hit or miss, and the boss falls once those shots prove your hit rate is above the kill bar: the 3σ lower bound, shown as the green bar on its card, must pass the red mark. A perfect circuit proves more than 50% after 10 hits. Proving 70% or 90% needs far more shots than the stream delivers before the boss reaches the gate, so in levels b and d use the Duel.</p>
+    <p><b>Repeat 1 to 4.</b> Success after k rounds is sin²((2k+1)θ) with sin θ = √(M/N). With 4 patterns and 1 target: 100%, 25%, 25%, 100%; one round is already perfect and more rounds overshoot. With 8 patterns: 78.1%, 94.5%, 33.0%, 1.2%, so level d needs exactly 2 rounds.</p>
+    <p><b>Superposed boss (c).</b> With 2 targets among 4, sin θ = 1/√2 and the standard success is 50% for every k: Grover's rotation lands exactly where it started. Grover's −1 phases are a choice, not a law. Use phase i in both the oracle (√X onto j) and the diffuser (X, controlled-S, X instead of X, CZ, X) and one round reaches 100%. This is phase-matched, exact Grover search (G. L. Long, 2001).</p>
+    <p><b>Measurement gate (x = 5, 10 HP).</b> It measures the data qubits of every register in the Z (0/1) or X (+/−) basis. At 0 HP it disappears; later registers cross x = 5 unmeasured and travel to x = 15, while earlier outcomes stay. Losing the gate does not end the game.</p>
+    <p><b>Zombies.</b> Classical zombies need two matching measured hits, break on the gate at a cost of 1 gate HP, and walk to the base once the gate is gone. Quantum zombies pass through the gate; an unmeasured qubit that meets one is measured in the X basis, and |+⟩ dissolves it.</p>
+    <p><b>Game over</b> when the base loses all 10 HP.</p>
+  </details>
+
+  <details class="panel notes">
+    <summary>Equivalent Qiskit circuit</summary>
+    <pre id="qiskitCode"></pre>
+  </details>
+
+  <p class="foot">Register states come from a local 3- or 4-qubit statevector in JavaScript; the Qiskit panel shows the equivalent circuit.</p>
+
+  <div class="tut-overlay hidden" id="tut" role="dialog" aria-modal="true" aria-labelledby="tutTitle">
+    <div class="tut-card">
+      <div class="tut-top"><span id="tutStep"></span><button class="tut-skip" id="tutSkip">Skip</button></div>
+      <h2 id="tutTitle"></h2>
+      <div class="tut-body" id="tutBody"></div>
+      <details class="tut-phys" id="tutPhysWrap"><summary>Physicist's corner</summary><div id="tutPhys"></div></details>
+      <div class="tut-nav">
+        <button class="btn ghost" id="tutBack">Back</button>
+        <div class="tut-dots" id="tutDots"></div>
+        <button class="btn btn-sun" id="tutNext">Next</button>
+      </div>
+    </div>
+  </div>
+</div>

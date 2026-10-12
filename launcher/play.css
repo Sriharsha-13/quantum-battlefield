@@ -1,0 +1,21 @@
+/* Back-to-launcher link shown above each adventure. Uses the adventure's own colour tokens. */
+.qb-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 10px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--wood);
+  color: var(--parchment);
+  font-family: var(--display);
+  font-size: 15px;
+  text-decoration: none;
+  box-shadow: 0 3px 0 var(--wood-dark);
+}
+.qb-home:hover { filter: brightness(1.1); }
+.qb-home:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+/* Levels the player hasn't unlocked yet (set by play.js). */
+#levelSel .qb-locked { opacity: .45; cursor: not-allowed; }
+#levelSel .qb-locked::before { content: "\1F512\00A0"; }

@@ -1,0 +1,445 @@
+/* Quantum Battlefield launcher: floating adventure tiles and a lawn map per adventure.
+   Colours, fonts and shapes follow the adventures' own style.css (sky, wood, parchment, lawn). */
+:root {
+  --sky: #9ad8f5;
+  --sky2: #d6f1ff;
+  --wood: #8a5a2b;
+  --wood-dark: #5b3a1a;
+  --parchment: #fbefcf;
+  --parchment2: #f3dfae;
+  --ink: #3b2412;
+  --muted: #7a5a3a;
+  --leaf: #4fae2c;
+  --leaf-dark: #2f7d1f;
+  --sun: #ffd23f;
+  --oracle: #5b3a8c;
+  --danger: #c8402c;
+  --focus: #1f6fd1;
+  /* Lawn and soil, as drawn on the game canvas (same in light and dark mode) */
+  --grass-a: #6cba43;
+  --grass-b: #7cc952;
+  --hedge: #3d8a2a;
+  --hedge2: #4c9c33;
+  --soil: #b98a4e;
+  --soil-dark: #7a4a22;
+  --display: "Lilita One", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
+  --body: "Nunito", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --sky: #12324a;
+    --sky2: #0b1a29;
+    --parchment: #2e2215;
+    --parchment2: #3a2b1a;
+    --ink: #f6e7c1;
+    --muted: #d1b98f;
+    --wood: #6b4625;
+    --wood-dark: #a77b4b;
+    --focus: #7ab8ff;
+  }
+}
+:root[data-theme="dark"] {
+  --sky: #12324a;
+  --sky2: #0b1a29;
+  --parchment: #2e2215;
+  --parchment2: #3a2b1a;
+  --ink: #f6e7c1;
+  --muted: #d1b98f;
+  --wood: #6b4625;
+  --wood-dark: #a77b4b;
+  --focus: #7ab8ff;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  min-height: 100vh;
+  padding: 24px 16px 36px;
+  background: linear-gradient(180deg, var(--sky) 0%, var(--sky2) 420px, var(--sky2) 100%);
+  color: var(--ink);
+  font-family: var(--body);
+  line-height: 1.5;
+}
+[hidden] { display: none !important; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.view { max-width: 1160px; margin: 0 auto; }
+
+/* Game-style title: white letters, leaf outline */
+.hero { text-align: center; }
+.hero h1, .map-head h2 {
+  font-family: var(--display);
+  font-weight: 400;
+  line-height: 1;
+  margin: 0;
+  color: #fff;
+  -webkit-text-stroke: 2px var(--leaf-dark);
+  paint-order: stroke fill;
+  text-shadow: 0 4px 0 var(--leaf-dark);
+}
+.hero h1 { font-size: clamp(38px, 7vw, 66px); }
+.tagline { margin: 14px 0 0; font-weight: 800; font-size: clamp(17px, 2.4vw, 20px); }
+.sign {
+  background: var(--parchment);
+  border: 3px solid var(--wood);
+  border-radius: 12px;
+  padding: 10px 16px;
+}
+.lead { display: inline-block; margin: 14px auto 0; max-width: 620px; font-size: 16px; }
+
+/* ---------- Home: floating tiles ---------- */
+.tiles {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 40px 52px;
+  margin: 50px 0 20px;
+}
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 236px;
+  color: var(--ink);
+  text-decoration: none;
+  border-radius: 30px;
+}
+.tile-art {
+  display: block;
+  width: 236px;
+  height: 236px;
+  border: 6px solid var(--wood);
+  border-radius: 30px;
+  box-shadow: 0 8px 0 var(--wood-dark);
+  overflow: hidden;
+  background: var(--grass-b);
+  animation: float 6s ease-in-out infinite;
+  animation-delay: var(--d);
+  transition: transform .15s ease;
+}
+.tile-art svg { display: block; width: 100%; height: 100%; }
+.tile .ket { font-family: var(--display); font-size: 22px; fill: #3b2412; }
+.tile .ket.light { fill: #fff4cf; }
+.tile .ket.small { font-size: 16px; }
+.tile:hover .tile-art, .tile:focus-visible .tile-art { animation-play-state: paused; transform: translateY(-6px) scale(1.04); }
+
+.tile-sign {
+  margin-top: 26px;
+  min-width: 190px;
+  text-align: center;
+  background: var(--wood);
+  color: #fff4cf;
+  border: 3px solid var(--wood-dark);
+  border-radius: 12px;
+  padding: 6px 14px 8px;
+  box-shadow: 0 4px 0 var(--wood-dark);
+}
+.tile-num { display: block; font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; opacity: .85; }
+.tile-name { display: block; font-family: var(--display); font-size: 23px; line-height: 1.15; }
+.tile-stars { display: block; font-weight: 800; font-size: 14px; }
+.tile-stars b { color: var(--sun); }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-14px) rotate(2deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tile-art { animation: none; }
+}
+
+.foot { text-align: center; margin-top: 36px; font-size: 13px; color: var(--muted); }
+.foot p { margin: 2px 0; }
+
+/* ---------- Map ---------- */
+.map-head { display: flex; align-items: center; gap: 18px; margin-bottom: 18px; flex-wrap: wrap; }
+.btn {
+  display: inline-block;
+  border: 3px solid var(--wood-dark);
+  background: var(--wood);
+  color: #fff4cf;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 3px 0 var(--wood-dark);
+}
+.btn:hover { transform: translateY(-1px); }
+.map-num {
+  display: inline-block;
+  background: var(--wood);
+  color: #fff4cf;
+  border: 3px solid var(--wood-dark);
+  border-radius: 10px;
+  padding: 1px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.map-head h2 { font-size: clamp(30px, 5vw, 46px); outline: none; }
+
+.map-layout { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
+
+/* The lawn: checker grass with a hedge along the top, framed in wood like the game's lawn */
+.board {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border: 6px solid var(--wood);
+  border-radius: 14px;
+  box-shadow: 0 6px 0 var(--wood-dark);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 17px 2px, var(--hedge2) 17px, transparent 18px) 0 0 / 34px 24px repeat-x,
+    linear-gradient(var(--hedge) 0 22px, transparent 22px),
+    repeating-conic-gradient(var(--grass-b) 0 25%, var(--grass-a) 0 50%) 0 22px / 96px 96px;
+}
+.board > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.board .blob {
+  fill: rgba(255, 255, 240, .16);
+  stroke: rgba(47, 125, 31, .75);
+  stroke-width: 3;
+  stroke-dasharray: 8 6;
+  vector-effect: non-scaling-stroke;
+}
+.board .trail-edge { stroke: var(--soil-dark); stroke-width: 20; stroke-linecap: round; vector-effect: non-scaling-stroke; fill: none; }
+.board .trail { stroke: var(--soil); stroke-width: 13; stroke-linecap: round; vector-effect: non-scaling-stroke; fill: none; }
+.board .trail.locked { stroke: #e4cf9e; stroke-width: 9; stroke-dasharray: 1 20; }
+
+.node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  border-radius: 50%;
+}
+.node .disc {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: #fbefcf;
+  color: #3b2412;
+  border: 5px solid #5b3a1a;
+  box-shadow: 0 5px 0 #5b3a1a;
+  font-family: var(--display);
+  font-size: 36px;
+  line-height: 1;
+  transition: transform .12s ease;
+}
+.node.locked .disc { background: #e4d3a8; width: 64px; height: 64px; border-width: 4px; }
+.node.locked .disc svg { width: 32px; height: 32px; }
+.node:hover .disc { transform: scale(1.08); }
+.node.sel .disc { background: var(--sun); box-shadow: 0 5px 0 #5b3a1a, 0 0 0 7px rgba(255, 244, 207, .85); }
+.node .stars { position: relative; display: flex; gap: 1px; margin-top: -10px; }
+.node .stars svg { width: 26px; height: 26px; }
+.node .stars svg:nth-child(2) { transform: translateY(6px); }
+.star-on { fill: #ffd23f; stroke: #5b3a1a; stroke-width: 1.8; stroke-linejoin: round; }
+.star-off { fill: #fff4cf; stroke: #5b3a1a; stroke-width: 1.4; stroke-linejoin: round; opacity: .7; }
+
+.side { display: flex; flex-direction: column; gap: 18px; }
+.panel {
+  background: var(--parchment);
+  border: 3px solid var(--wood);
+  border-radius: 12px;
+  padding: 14px 16px 16px;
+}
+.panel h3 { font-family: var(--display); font-weight: 400; font-size: 20px; margin: 0 0 10px; }
+.bars { display: flex; gap: 10px; height: 110px; }
+.bar { position: relative; flex: 1; background: var(--parchment2); border-radius: 6px; overflow: hidden; }
+.bar span {
+  position: absolute; left: 18%; right: 18%; bottom: 0;
+  border-radius: 4px 4px 0 0;
+  background: var(--sun);
+  box-shadow: 0 0 0 2px var(--wood-dark);
+  transition: height .35s ease;
+}
+.bar.zero span { display: none; }
+.bar-labels { display: flex; gap: 10px; margin-top: 6px; }
+.bar-labels span { flex: 1; text-align: center; font-family: var(--display); font-size: 15px; color: var(--muted); }
+
+/* The house door from the game: wooden planks, a brass knob, a parchment notice */
+.door {
+  position: relative;
+  border: 6px solid var(--wood-dark);
+  border-radius: 70px 70px 14px 14px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 46px, rgba(0, 0, 0, .14) 46px 49px),
+    #7a4a22;
+  padding: 22px 18px 20px;
+  box-shadow: 0 6px 0 var(--wood-dark);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.door-frame.top { display: grid; place-items: center; padding-top: 4px; }
+.padlock { width: 56px; height: 56px; }
+.knob {
+  position: absolute;
+  right: 16px;
+  bottom: 30px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffd23f;
+  border: 3px solid #5b3a1a;
+}
+.door-tag {
+  background: var(--parchment);
+  color: var(--ink);
+  border: 3px solid var(--wood-dark);
+  border-radius: 10px;
+  padding: 12px 14px 14px;
+  margin-bottom: 26px;
+}
+.door-key { font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.door-name { font-family: var(--display); font-size: 23px; line-height: 1.15; margin-top: 2px; }
+.door-desc { margin: 6px 0 12px; font-size: 15px; line-height: 1.45; }
+.play {
+  display: block;
+  text-align: center;
+  background: var(--leaf);
+  border: 3px solid var(--leaf-dark);
+  color: #fff;
+  font-family: var(--display);
+  font-size: 20px;
+  border-radius: 10px;
+  padding: 10px 12px;
+  text-decoration: none;
+  box-shadow: 0 4px 0 var(--leaf-dark);
+}
+.play:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--leaf-dark); }
+.play[aria-disabled="true"] { opacity: .45; cursor: not-allowed; pointer-events: none; }
+
+.map-tools { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-top: 22px; font-size: 15px; }
+.switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 700; }
+.switch input { width: 20px; height: 20px; accent-color: var(--leaf); }
+.link { background: none; border: 0; padding: 4px; font: inherit; font-weight: 700; color: var(--muted); text-decoration: underline; cursor: pointer; }
+
+@media (max-width: 860px) {
+  .map-layout { grid-template-columns: 1fr; }
+  .side { flex-direction: column-reverse; }
+}
+@media (max-width: 640px) {
+  body { padding: 14px 16px 28px; }
+  .tiles { gap: 34px; margin-top: 36px; }
+  .tile, .tile-art { width: 206px; }
+  .tile-art { height: 206px; }
+  .board { aspect-ratio: 10 / 13; }
+  .node .disc { width: 62px; height: 62px; font-size: 29px; }
+  .node.locked .disc { width: 54px; height: 54px; }
+  .node .stars svg { width: 22px; height: 22px; }
+}
+
+/* ---------- Background: golden sunlight and light floating game pieces ---------- */
+/* Kept behind everything, mostly at the edges, faint and slow so the content stays the focus. */
+.floaters { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.floaters .glow {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(38% 30% at 20% 18%, rgba(255, 210, 63, .30), transparent 70%),
+    radial-gradient(34% 28% at 82% 70%, rgba(255, 190, 70, .22), transparent 70%),
+    radial-gradient(30% 26% at 60% 30%, rgba(255, 236, 160, .25), transparent 70%);
+  animation: sunlight 26s ease-in-out infinite alternate;
+}
+.fl {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--s, 40px);
+  height: var(--s, 40px);
+  opacity: .5;
+  animation: bob var(--t, 10s) ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+.fl.ket {
+  width: auto;
+  height: auto;
+  font-family: var(--display);
+  font-size: 30px;
+  line-height: 1;
+  color: #fff;
+  -webkit-text-stroke: 1.5px var(--wood);
+  paint-order: stroke fill;
+}
+@keyframes bob {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0) rotate(-6deg); }
+  50% { transform: translate(-50%, -50%) translateY(-18px) rotate(6deg); }
+}
+@keyframes sunlight {
+  from { transform: translate(-4%, -3%) scale(1); }
+  to { transform: translate(5%, 4%) scale(1.08); }
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .floaters .glow { opacity: .35; }
+  :root:not([data-theme="light"]) .fl { opacity: .32; }
+}
+:root[data-theme="dark"] .floaters .glow { opacity: .35; }
+:root[data-theme="dark"] .fl { opacity: .32; }
+@media (max-width: 640px) {
+  .fl { opacity: .35; }
+  .fl:nth-of-type(3n) { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fl, .floaters .glow { animation: none; }
+  .fl { transform: translate(-50%, -50%); }
+}
+
+/* ---------- Gold background ---------- */
+/* Same top-light, bottom-dark shading as the sky, in gold. The gradient slowly slides up and down
+   and the sunlight glows drift over it. Dark mode uses deep bronze-gold. */
+:root {
+  --gold-1: #fff1b8;
+  --gold-2: #ffd75e;
+  --gold-3: #f2b631;
+  --gold-4: #d9951c;
+  --glow-a: rgba(255, 255, 255, .45);
+  --glow-b: rgba(255, 244, 200, .35);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --gold-1: #7a5814;
+    --gold-2: #5c400c;
+    --gold-3: #3f2b07;
+    --gold-4: #2a1c04;
+    --glow-a: rgba(255, 210, 63, .22);
+    --glow-b: rgba(255, 190, 70, .16);
+  }
+}
+:root[data-theme="dark"] {
+  --gold-1: #7a5814;
+  --gold-2: #5c400c;
+  --gold-3: #3f2b07;
+  --gold-4: #2a1c04;
+  --glow-a: rgba(255, 210, 63, .22);
+  --glow-b: rgba(255, 190, 70, .16);
+}
+body { background: var(--gold-3); }
+.floaters {
+  background: linear-gradient(180deg, var(--gold-1) 0%, var(--gold-2) 30%, var(--gold-3) 65%, var(--gold-4) 100%);
+  background-size: 100% 160%;
+  animation: goldShift 18s ease-in-out infinite alternate;
+}
+.floaters .glow {
+  background:
+    radial-gradient(38% 30% at 20% 18%, var(--glow-a), transparent 70%),
+    radial-gradient(34% 28% at 82% 70%, var(--glow-b), transparent 70%),
+    radial-gradient(30% 26% at 60% 30%, var(--glow-b), transparent 70%);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .floaters .glow { opacity: 1; }
+}
+:root[data-theme="dark"] .floaters .glow { opacity: 1; }
+@keyframes goldShift {
+  from { background-position: 0 0%; }
+  to { background-position: 0 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .floaters { animation: none; } }
+.fl.ket { -webkit-text-stroke: 2.5px var(--wood); }
