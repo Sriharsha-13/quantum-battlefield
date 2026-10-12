@@ -443,3 +443,17 @@ body { background: var(--gold-3); }
 }
 @media (prefers-reduced-motion: reduce) { .floaters { animation: none; } }
 .fl.ket { -webkit-text-stroke: 2.5px var(--wood); }
+
+/* Footer link to the project's Qollab workspace */
+.qollab-link {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: var(--wood);
+  border: 2px solid var(--wood-dark);
+  color: #fff4cf;
+  font-weight: 800;
+  text-decoration: none;
+}
+.qollab-link:hover { filter: brightness(1.1); }

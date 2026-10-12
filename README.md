@@ -8,6 +8,12 @@ Every shot fired across the lawn is a live quantum state. It stays in superposit
 
 Built by Sriharsha for the **Qollab Hackathon 2026**.
 
+## A Qollab Hackathon project
+
+Quantum Battlefield was created for the **Qollab Hackathon 2026**. A big thank-you to the Qollab team for organising the hackathon and for the chance to build this game.
+
+🧪 **Run it in the Qollab workspace:** [Quantum Battlefield on Qollab](https://qollab.xyz/p/01a123a4-1b9e-79ae-b26d-b35089b05541)
+
 ## Adventures
 
 | Adventure | Levels | Physics you play with |
